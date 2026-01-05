@@ -6,14 +6,15 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
-    app_name: str
-    admin_email: str = "admin@example.com"
-    items_per_page: int = 50
+    APP_NAME: str
+    ADMIN_EMAIL: str = "admin@example.com"
+    ITEMS_PER_PAGE: int = 50
     DATABASE_URL: str
-    jwt_secret_key : str
-    jwt_algorithm : str
-    jwt_expire_minutes : int
-    REFRESH_EXPIRE_MINUTES : int
+    JWT_SECRET_KEY : str
+    JWT_ALGORITHM : str
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES : int
+    JWT_REFRESH_EXPIRE_MINUTES : int
+    CORS_ORIGINS: str
 
 
     class Config:

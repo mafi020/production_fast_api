@@ -3,13 +3,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.user import UserInDB
 from app.db.database import get_db
 from app.crud.crud_users import get_users, get_user
+from app.dependencies.auth import get_current_user
 
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(
+        prefix="/users", 
+        tags=["users"], 
+        dependencies=[Depends(get_current_user)]
+    )
 
 @router.get("/", response_model=list[UserInDB])
 async def read_users(db: AsyncSession = Depends(get_db)):
-    return await get_users(db)
+    users= await get_users(db)
+    return users
 
 @router.get("/{user_id}", response_model=UserInDB)
 async def read_user(user_id: int, db: AsyncSession = Depends(get_db)):

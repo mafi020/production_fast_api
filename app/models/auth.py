@@ -14,7 +14,6 @@ class Auth(Base):
     expires_at = Column(DateTime(timezone=True), nullable=True)
 
 
-    # user = relationship("User", back_populates="auth", lazy="joined")
-    user = relationship("User", backref="auth", lazy="joined")
+    user = relationship("User", back_populates="auth", lazy="joined")
 
     
