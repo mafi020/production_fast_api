@@ -9,7 +9,7 @@ from app.middleware.logging_middleware import LoggingMiddleware
 from app.core.lifespan import lifespan
 from app.dependencies.auth import get_current_user
 from app.dependencies.rate_limit import rate_limit_dependency
-
+from app.tasks.email import send_email
 
 app = FastAPI(title=settings.APP_NAME,lifespan=lifespan)
 origins = settings.CORS_ORIGINS.split(",")
@@ -28,6 +28,16 @@ app.add_exception_handler(
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the API"}
+
+
+# celeryy test 
+@app.post("/celery-test")
+def celery_test(email: str):
+    task = send_email.delay(email)
+    return {
+        "message": "Task submitted",
+        "task_id": task.id
+    }
 
 # Public APIs (no auth)
 app.include_router(public_router)

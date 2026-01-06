@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 class Settings(BaseSettings):
     APP_NAME: str
     ADMIN_EMAIL: str = "admin@example.com"

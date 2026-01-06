@@ -1,6 +1,6 @@
+import logging
 from redis.asyncio import Redis
 from app.core.config import settings
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -12,17 +12,14 @@ async def init_redis():
 
     if not settings.REDIS_HOST:
         logger.warning("Redis is not configured. Rate limiting disabled.")
-        redis = None
         return None
 
     try:
-        redis = Redis(
-            host=settings.REDIS_HOST,
-            port=settings.REDIS_PORT,
+        redis = Redis.from_url(
+            settings.REDIS_HOST,
             decode_responses=True,
         )
 
-        # 🔍 sanity check
         await redis.ping()
         logger.info("Redis connected successfully")
 
