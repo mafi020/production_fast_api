@@ -1,6 +1,5 @@
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
@@ -15,6 +14,8 @@ class Settings(BaseSettings):
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES : int
     JWT_REFRESH_EXPIRE_MINUTES : int
     CORS_ORIGINS: str
+    REDIS_HOST: str
+    REDIS_PORT: int
 
 
     class Config:

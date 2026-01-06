@@ -1,9 +1,21 @@
 from fastapi import APIRouter
-from .routers import items, users, auth
+from app.api.routers import auth, users, items
 
-api_router = APIRouter(prefix="/api")
+# Protected router (auth + rate limiting applied later)
+routers = [users.router, items.router]
 
-routers = [auth.router, users.router, items.router]
+protected_router = APIRouter(prefix="/api")
 
 for router in routers:
-    api_router.include_router(router)
+    protected_router.include_router(router)
+
+# Public router (NO auth required)
+public_router = APIRouter(prefix="/api")
+public_router.include_router(auth.router)
+
+
+# Export both
+__all__ = ["public_router", "protected_router"]
+
+
+    

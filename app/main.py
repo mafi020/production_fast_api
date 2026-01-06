@@ -1,16 +1,18 @@
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI
 from fastapi.exceptions import RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware
-from app.api.main import api_router
+from app.api.main import protected_router, public_router
 from app.core.config import settings
 from app.core.validation import validation_exception_handler
 from app.middleware.response_middleware import UniversalResponseMiddleware
 from app.core.cors import setup_cors
 from app.middleware.logging_middleware import LoggingMiddleware
+from app.core.lifespan import lifespan
+from app.dependencies.auth import get_current_user
+from app.dependencies.rate_limit import rate_limit_dependency
 
 
-app = FastAPI(title=settings.APP_NAME)
-origins = origins = settings.CORS_ORIGINS.split(",")
+app = FastAPI(title=settings.APP_NAME,lifespan=lifespan)
+origins = settings.CORS_ORIGINS.split(",")
 
 # Middlewares
 setup_cors(app, origins)
@@ -27,4 +29,15 @@ app.add_exception_handler(
 def read_root():
     return {"message": "Welcome to the API"}
 
-app.include_router(api_router)
+# Public APIs (no auth)
+app.include_router(public_router)
+
+# Protected APIs (auth + rate limit)
+app.include_router(
+    protected_router,
+    dependencies=[
+        Depends(get_current_user),
+        Depends(rate_limit_dependency),
+
+    ],
+)
