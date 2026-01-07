@@ -11,7 +11,14 @@ from app.dependencies.auth import get_current_user
 from app.dependencies.rate_limit import rate_limit_dependency
 from app.tasks.email import send_email
 
-app = FastAPI(title=settings.APP_NAME,lifespan=lifespan)
+app = FastAPI(
+    title=settings.APP_NAME,
+    lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc",
+    version="1.0.0",  # Add this
+    openapi_version="3.1.0"  # Add this
+)
 origins = settings.CORS_ORIGINS.split(",")
 
 # Middlewares

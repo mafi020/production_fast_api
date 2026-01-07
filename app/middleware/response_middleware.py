@@ -1,4 +1,3 @@
-# app/middleware/universal_response.py
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
@@ -12,6 +11,10 @@ class UniversalResponseMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         try:
+
+            if request.url.path in ["/openapi.json", "/docs", "/redoc"]:
+                return await call_next(request)
+
             response = await call_next(request)
 
             # Only wrap JSON responses
