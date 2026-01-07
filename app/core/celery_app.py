@@ -15,8 +15,7 @@ celery_app.conf.update(
     result_expires=3600,
 )
 
-# from app.tasks import email
-celery_app.autodiscover_tasks(['app.tasks'])
+from app.tasks import email
 
 
 
