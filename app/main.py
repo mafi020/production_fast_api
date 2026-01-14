@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.exceptions import RequestValidationError
 from app.api.main import protected_router, public_router
 from app.core.config import settings
@@ -16,9 +16,10 @@ app = FastAPI(
     lifespan=lifespan,
     docs_url="/docs",
     redoc_url="/redoc",
-    version="1.0.0",  # Add this
-    openapi_version="3.1.0"  # Add this
+    version="1.0.0",
+    openapi_version="3.1.0" 
 )
+
 origins = settings.CORS_ORIGINS.split(",")
 
 # Middlewares
@@ -45,6 +46,20 @@ def celery_test(email: str):
         "message": "Task submitted",
         "task_id": task.id
     }
+
+
+# Websocket test endpoint
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            print("data ===>", data)
+            await websocket.send_text(f"Echo: {data}")
+    except WebSocketDisconnect:
+        print("Client disconnected")
 
 # Public APIs (no auth)
 app.include_router(public_router)
